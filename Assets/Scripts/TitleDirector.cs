@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 /// <summary>
@@ -27,6 +28,12 @@ public class TitleDirector : MonoBehaviour
     private void Start()
     {
         this.titleLogo.gameObject.SetActive(false);
+
+        // 終了時点で行う処理を記述
+        this.patora.SetFunc(()=>{
+            SceneManager.LoadScene("MainScene");
+            return true;
+        });
     }
 
     /// <summary>

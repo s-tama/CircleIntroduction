@@ -16,6 +16,9 @@ Shader "Patora/Patora_Face"
 		_SinNoiseWidth("SineNoiseWidth", Float) = 1
 		_SinNoiseScale("SinNoiseScale", Float) = 1
 		_SinNoiseOffset("SinNoiseOffset", Float) = 1
+		_ScanLineTail("Tail", Float) = 0.5
+		_ScanLineSpeed("TailSpeed", Float) = 100
+		_Close("Close", Float) = 0
     }
     SubShader
     {
@@ -50,6 +53,9 @@ Shader "Patora/Patora_Face"
 			float _SinNoiseScale;	// ノイズの大きさ
 			float _NoiseX;			// Xノイズ
 			float _RGBNoise;		// RGBノイズ
+			float _ScanLineTail;
+			float _ScanLineSpeed;
+			float _Close;
 
 			// ランダムな値を返す関数
 			float rand(float2 co) 
@@ -112,6 +118,13 @@ Shader "Patora/Patora_Face"
 				// スキャンラインを描画
 				float scanLineColor = sin(_Time.y * 10 + uv.y * 100) / 2 + 0.5;
 				col *= 0.5 + clamp(scanLineColor + 0.5, 0, 1) * 0.5;
+
+				// スキャンラインの残像を描画
+				float tail = clamp((frac(uv.y + _Time.y * _ScanLineSpeed) - 1 + _ScanLineTail) / min(_ScanLineTail, 1), 0, 1);
+				col *= tail;
+
+				// 画面端を暗くする
+				col *= 1 - vignet * _Close;
 
                 return float4(col, 1)*_Color;
             }
